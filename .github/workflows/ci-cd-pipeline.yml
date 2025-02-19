@@ -1,0 +1,59 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: 
+      - main
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+            python-version: '3.9' 
+
+      - name: Install dependencies
+        run: 
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Run tests
+        run: |
+          python -m pytest main.py
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install flake8 (linter)
+        run: |
+          pip install flake8
+
+      - name: Run flake8
+        run: |
+          flake8 main.py
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build, lint]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Simulate deployment
+        run: |
+          echo "Deploying application..."
+          echo "Deployment complete!"
